@@ -5,21 +5,26 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public final class DatabaseConnection {
+
     private static final String DEFAULT_URL =
-            "jdbc:mysql://localhost:3306/alumnos?serverTimezone=UTC";
+            "jdbc:mysql://10.127.168.128:3306/alumnos?serverTimezone=UTC";
+
+    private static final String USER = "daw2";
+    private static final String PASSWORD = "secreto";
 
     private DatabaseConnection() {
     }
 
-    public static Connection getConnection() throws SQLException {
-        String url = System.getenv().getOrDefault("DB_URL", DEFAULT_URL);
-        String user = System.getenv("DB_USER");
-        String password = System.getenv("DB_PASSWORD");
-
-        if (user == null || password == null) {
-            throw new SQLException("Configura las variables DB_USER y DB_PASSWORD.");
-        }
-
-        return DriverManager.getConnection(url, user, password);
+//    public static Connection getConnection() throws SQLException {
+//        return DriverManager.getConnection(DEFAULT_URL, USER, PASSWORD);
+//    }
+public static Connection getConnection() throws SQLException {
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+    } catch (ClassNotFoundException e) {
+        throw new SQLException("No se encuentra MySQL Connector/J", e);
     }
+
+    return DriverManager.getConnection(DEFAULT_URL, USER, PASSWORD);
+}
 }
