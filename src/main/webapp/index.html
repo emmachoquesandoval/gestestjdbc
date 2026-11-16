@@ -12,13 +12,26 @@
             color: white;
             text-align: center;
         }
+        h2{
+            color: white;
+        }
 
     </style>
 </head>
 <body>
 <h1>Gestion de estudiantes</h1>
-<form action="controlador" method="get">
+<form action="controlador" method="post">
     <button type="submit">Consultar alumnos</button>
+</form>
+<hr>
+<form action="controlador" method="get">
+    <h2><label for="id">ID alumno: </label><br></h2>
+    <input type="number" id="id" name="id" min="0"><br>
+    <h2><label for="curso">Curso: </label><br></h2>
+    <input type="text" id="curso" name="curso"><br>
+    <h2><label for="nombre">Nombre: </label><br></h2>
+    <input type="text" id="nombre" name="nombre"><br><br>
+    <button value="alta">Alta</button>
 </form>
 </body>
 </html>
