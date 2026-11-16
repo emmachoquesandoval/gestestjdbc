@@ -4,7 +4,7 @@
 
 ### ¿Qué hace esta aplicación?
 
-`gestestjdbc` es una pequeña aplicación web Java para consultar estudiantes almacenados en una base de datos MySQL y mostrarlos en una página HTML. La aplicación está construida con Maven, Jakarta Servlet y JDBC, y usa un servlet para ejecutar una consulta SQL y devolver la lista en formato HTML.
+`gestestjdbc` es una pequeña aplicación web Java para consultar estudiantes almacenados en una base de datos MySQL y mostrarlos en una página HTML. La aplicación está construida con Maven, Jakarta Servlet y JDBC, y usa un servlet para ejecutar la consulta y devolver el contenido HTML.
 
 La lógica principal se encuentra en:
 
@@ -19,7 +19,7 @@ La aplicación no crea ni modifica registros; solo realiza una lectura desde la 
 ```mermaid
 flowchart LR
     A[Usuario] --> B[index.html]
-    B --> C[form action="controlador"]
+    B --> C[form action /controlador]
     C --> D[AppController.java]
     D --> E[DatabaseConnection.java]
     E --> F[(MySQL / alumnos)]
@@ -55,7 +55,7 @@ INSERT INTO alumnos (nombre, curso) VALUES
 ('Marta', 'SMR2');
 ```
 
-> Importante: el código actual usa el nombre `alumnos` exactamente en la consulta SQL (`SELECT nombre, curso FROM alumnos ORDER BY id`). Si tu entorno usa otra convención de mayúsculas/minúsculas, ajusta la tabla y la configuración del acceso a la base de datos.
+> Importante: el código actual usa el nombre `alumnos` exactamente en la consulta SQL (`SELECT nombre, curso FROM alumnos ORDER BY id`). Si tu entorno usa otra convención de mayúsculas/minúsculas, ajusta también el nombre de la tabla y la configuración de conexión.
 
 ### Configuración de conexión
 
@@ -114,7 +114,7 @@ http://localhost:8080/gestestjdbc/
 
 ### What does this application do?
 
-`gestestjdbc` is a small Java web application that reads student data from a MySQL database and displays it on an HTML page. It is built with Maven, Jakarta Servlet, and JDBC, and it uses a servlet to run a SQL query and return the result as HTML.
+`gestestjdbc` is a small Java web application that reads student data from a MySQL database and displays it on an HTML page. It is built with Maven, Jakarta Servlet, and JDBC, and it uses a servlet to run the query and return the HTML content.
 
 The main logic is in:
 
@@ -129,7 +129,7 @@ This project is a read-only application; it does not insert, update, or delete r
 ```mermaid
 flowchart LR
     A[User] --> B[index.html]
-    B --> C[form action="controlador"]
+    B --> C[form action /controlador]
     C --> D[AppController.java]
     D --> E[DatabaseConnection.java]
     E --> F[(MySQL / alumnos)]
