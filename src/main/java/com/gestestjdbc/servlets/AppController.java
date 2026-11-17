@@ -23,6 +23,7 @@ public class AppController extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         List<Alumno> alumnos = new ArrayList<>();
+        // Se lee la consulta del formulario:
         String consulta = request.getParameter("select");
         try (Connection connection = DatabaseConnection.getConnection();
              java.sql.Statement statement = connection.createStatement();
