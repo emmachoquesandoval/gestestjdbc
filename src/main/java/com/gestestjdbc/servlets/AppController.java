@@ -42,23 +42,12 @@ public class AppController extends HttpServlet {
 
         for (Alumno alumno : alumnos) {
             html.append(alumno.getId()).append(" ")
-                    .append(escapeHtml(alumno.getCurso())).append(" ")
-                    .append(escapeHtml(alumno.getNombre())).append("<br>");
+                    .append(alumno.getCurso()).append(" ")
+                    .append(alumno.getNombre()).append("<br>");
         }
 
         html.append("<p><a href='index.html'>Volver</a></p></body></html>");
         response.getWriter().write(html.toString());
-    }
-
-    private static String escapeHtml(String value) {
-        if (value == null) {
-            return "";
-        }
-        return value.replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\"", "&quot;")
-                .replace("'", "&#39;");
     }
 
     private static class Alumno {
