@@ -84,5 +84,57 @@ public class AppController extends HttpServlet {
         private String getNombre() { return nombre; }
         private String getCurso() { return curso; }
     }
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+
+        String accion = request.getParameter("accion");
+
+        if (!"alta".equals(accion)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Acción no válida");
+            return;
+        }
+
+        String idTexto = request.getParameter("id");
+        String curso = request.getParameter("curso");
+        String nombre = request.getParameter("nombre");
+
+        try {
+            int id = Integer.parseInt(idTexto);
+
+            String sql = "INSERT INTO alumnos (id, curso, nombre) VALUES (?, ?, ?)";
+
+            try (Connection connection = DatabaseConnection.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(sql)) {
+
+                statement.setInt(1, id);
+                statement.setString(2, curso);
+                statement.setString(3, nombre);
+
+                int filasInsertadas = statement.executeUpdate();
+
+                if (filasInsertadas == 1) {
+                    response.getWriter().write(
+                            "<!doctype html><html lang='es'><meta charset='UTF-8'>" +
+                                    "<h1>Alumno añadido correctamente</h1>" +
+                                    "<p><a href='index.html'>Volver</a></p></html>"
+                    );
+                } else {
+                    response.getWriter().write("<h1>No se pudo añadir el alumno</h1>");
+                }
+            }
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "El ID debe ser un número");
+        } catch (SQLException e) {
+            getServletContext().log("No se pudo insertar el alumno en MySQL.", e);
+            response.sendError(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "No se pudo insertar el alumno. Revisa la conexión y los datos."
+            );
+        }
+    }
 
 }
