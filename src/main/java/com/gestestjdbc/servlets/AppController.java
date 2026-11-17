@@ -23,41 +23,30 @@ public class AppController extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         List<Alumno> alumnos = new ArrayList<>();
-        String consulta = "SELECT nombre, curso FROM alumnos ORDER BY id";
+        String consulta = request.getParameter("select");
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(consulta);
-             ResultSet resultSet = statement.executeQuery()) {
+             java.sql.Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(consulta)) {
             while (resultSet.next()) {
                 alumnos.add(new Alumno(
-                        resultSet.getString("nombre"),
-                        resultSet.getString("curso")));
+                        resultSet.getString("id"),
+                        resultSet.getString("curso"),
+                        resultSet.getString("nombre")));
             }
         } catch (SQLException e) {
-            getServletContext().log("No se pudieron consultar los alumnos en MySQL.", e);
-            response.sendError(
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "No se pudo consultar la base de datos. Revisa la conexión y la tabla alumnos.");
+            System.out.println("Error MySQL");
             return;
         }
 
-        StringBuilder listaAlumnos = new StringBuilder();
+        StringBuilder html = new StringBuilder("<!doctype html><html lang=\"es\"><meta charset=\"UTF-8\"><body bgcolor=\"lightyellow\"><h2>Usa JDBC para recuperar registros de una tabla</h2><hr>id curso nombre<br>");
 
         for (Alumno alumno : alumnos) {
-            listaAlumnos.append("<li><strong>")
-                    .append(escapeHtml(alumno.getNombre()))
-                    .append("</strong> — Curso: ")
-                    .append(escapeHtml(alumno.getCurso()))
-                    .append("</li>\n");
+            html.append(alumno.getId()).append(" ")
+                    .append(escapeHtml(alumno.getCurso())).append(" ")
+                    .append(escapeHtml(alumno.getNombre())).append("<br>");
         }
 
-        StringBuilder html = new StringBuilder("<!doctype html>\n" +
-                                               "<html lang=\"es\">\n" +
-                                               "<head><meta charset=\"UTF-8\"><title>Lista de alumnos</title></head>\n" +
-                                               "<body>\n" +
-                                               "<h1>Lista de alumnos</h1>\n" +
-                                               "<ul>\n");
-        html.append(listaAlumnos)
-                .append("</ul><p><a href=\"index.html\">Volver</a></p></body></html>");
+        html.append("<p><a href='index.html'>Volver</a></p></body></html>");
         response.getWriter().write(html.toString());
     }
 
@@ -75,12 +64,15 @@ public class AppController extends HttpServlet {
     private static class Alumno {
         private final String nombre;
         private final String curso;
+        private final String id;
 
-        private Alumno(String nombre, String curso) {
+        private Alumno(String id, String curso, String nombre) {
+            this.id = id;
             this.nombre = nombre;
             this.curso = curso;
         }
 
+        private String getId() { return id; }
         private String getNombre() { return nombre; }
         private String getCurso() { return curso; }
     }
@@ -92,12 +84,6 @@ public class AppController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         String accion = request.getParameter("accion");
-
-        if (!"alta".equals(accion)) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Acción no válida");
-            return;
-        }
-
         String idTexto = request.getParameter("id");
         String curso = request.getParameter("curso");
         String nombre = request.getParameter("nombre");
@@ -126,14 +112,8 @@ public class AppController extends HttpServlet {
                     response.getWriter().write("<h1>No se pudo añadir el alumno</h1>");
                 }
             }
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "El ID debe ser un número");
         } catch (SQLException e) {
-            getServletContext().log("No se pudo insertar el alumno en MySQL.", e);
-            response.sendError(
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "No se pudo insertar el alumno. Revisa la conexión y los datos."
-            );
+            System.out.println("Error MySQL");
         }
     }
 
